@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f3ec">
+  <title>Counter</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #19363a;
+      background: #f6f3ec;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+    * { box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(ellipse at 12% 15%, #e2eee4 0, transparent 35%),
+        radial-gradient(ellipse at 91% 82%, #f5e6ca 0, transparent 33%),
+        #f6f3ec;
+    }
+    main {
+      width: min(100%, 430px);
+      padding: 38px;
+      border: 1px solid rgba(25, 54, 58, .09);
+      border-radius: 28px;
+      background: rgba(255, 254, 250, .88);
+      box-shadow: 0 24px 70px rgba(38, 59, 51, .11);
+      text-align: center;
+    }
+    .eyebrow {
+      margin: 0 0 9px;
+      color: #65817a;
+      font-size: .76rem;
+      font-weight: 750;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+    h1 { margin: 0; font-size: clamp(2rem, 7vw, 2.65rem); letter-spacing: -.055em; }
+    .hint { margin: 10px 0 29px; color: #74847f; font-size: .98rem; }
+    .count-wrap {
+      display: grid;
+      min-height: 190px;
+      place-items: center;
+      margin-bottom: 25px;
+      border-radius: 22px;
+      background: #edf3ed;
+    }
+    #count {
+      color: #237b72;
+      font-size: clamp(5rem, 23vw, 7.25rem);
+      font-variant-numeric: tabular-nums;
+      font-weight: 720;
+      letter-spacing: -.075em;
+      line-height: 1;
+      transition: transform .15s ease, color .15s ease;
+    }
+    #count.bump { transform: scale(1.06); }
+    .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    button {
+      min-height: 60px;
+      border: 0;
+      border-radius: 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
+    }
+    button:hover { transform: translateY(-2px); }
+    button:active { transform: translateY(0) scale(.98); }
+    button:focus-visible { outline: 3px solid #e49a55; outline-offset: 3px; }
+    .change { display: flex; align-items: center; justify-content: center; gap: 9px; background: #237b72; color: white; box-shadow: 0 7px 15px rgba(35, 123, 114, .16); }
+    .change:hover { background: #1d6d65; }
+    .symbol { font-size: 1.55rem; font-weight: 500; line-height: 1; }
+    .reset { grid-column: 1 / -1; min-height: 48px; background: #f1eee7; color: #536964; }
+    .reset:hover { background: #e9e5dc; }
+    .footnote { margin: 20px 0 0; color: #94a09a; font-size: .78rem; }
+    @media (max-width: 420px) { main { padding: 28px 22px; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <main aria-labelledby="title">
+    <p class="eyebrow">Keep your count</p>
+    <h1 id="title">Counter</h1>
+    <p class="hint">One tap at a time.</p>
+    <div class="count-wrap">
+      <output id="count" aria-live="polite" aria-atomic="true">0</output>
+    </div>
+    <div class="controls">
+      <button class="change" id="decrease" type="button" aria-label="Decrease count"><span class="symbol" aria-hidden="true">−</span> Decrease</button>
+      <button class="change" id="increase" type="button" aria-label="Increase count"><span class="symbol" aria-hidden="true">+</span> Increase</button>
+      <button class="reset" id="reset" type="button">Reset to zero</button>
+    </div>
+    <p class="footnote">Your count stays on this device.</p>
+  </main>
+  <script>
+    const display = document.querySelector('#count');
+    const storageKey = 'simple-counter-value';
+    let count = Number.parseInt(localStorage.getItem(storageKey) ?? '0', 10);
+    if (!Number.isFinite(count)) count = 0;
+
+    function render() {
+      display.value = String(count);
+      display.textContent = String(count);
+      localStorage.setItem(storageKey, String(count));
+      display.classList.remove('bump');
+      requestAnimationFrame(() => {
+        display.classList.add('bump');
+        window.setTimeout(() => display.classList.remove('bump'), 160);
+      });
+    }
+
+    document.querySelector('#decrease').addEventListener('click', () => { count--; render(); });
+    document.querySelector('#increase').addEventListener('click', () => { count++; render(); });
+    document.querySelector('#reset').addEventListener('click', () => { count = 0; render(); });
+    display.value = String(count);
+    display.textContent = String(count);
+  </script>
+</body>
+</html>
